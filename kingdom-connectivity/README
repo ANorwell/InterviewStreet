@@ -1,0 +1,11 @@
+Approach:
+1. Do a DFS backwards from N to find the nodes from which N is
+   reachable. We work with this subgraph.
+2. Topologically sort the subgraph.  Any backededges in the
+   topological sort indicate a cycle. Otherwise, there are only
+   forward edges to worry about in the resulting list of nodes.
+3. Starting at node 1, use memoization as follows: define d(1,k) to be
+   the number of paths from 1 to k. Then
+     d(1,k) = e(1,k) + sum(e(j,k)*d(1,j))
+   where the sum is over all nodes that have an edge to k.
+   d(1,N) is the desired count.
