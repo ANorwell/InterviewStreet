@@ -1,0 +1,4 @@
+Approach:
+Sort the array of numbers. In the sorted array, maintain a rolling
+window (left and right endpoints) that checks the difference between
+the two numbers and updates the window correspondingly.
