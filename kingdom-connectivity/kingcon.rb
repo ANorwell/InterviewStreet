@@ -1,23 +1,14 @@
 #each node represents a city
 class Node
-  UNVISITED = 0 #a completely untouched node
+  UNVISITED = 0          #a completely untouched node
   CAN_REACH_TARGET = 1   #a node from which there is a path to the target node
-  VISITED = 2
+  VISITED = 2            #a node that has been visited in the forward DFS
   def initialize(id)
     @id = id
     @children = Hash.new
-    @reverse_children = Hash.new
+    @parents = Hash.new
     @visit = UNVISITED
-    @top_position = -1
     @paths = 0
-  end
-
-  def position(arg=nil)
-    if arg
-      @top_position = arg
-    else
-      @top_position
-    end
   end
 
   def paths(arg=nil)
@@ -34,11 +25,11 @@ class Node
     else
       @children[node] = 1
     end
-    reverse = node.reverse_children
-    if reverse[self]
-      reverse[self] += 1 
+    parents = node.parents
+    if parents[self]
+      parents[self] += 1 
     else
-      reverse[self] = 1
+      parents[self] = 1
     end
   end
 
@@ -46,8 +37,8 @@ class Node
     @children
   end
 
-  def reverse_children
-    @reverse_children
+  def parents
+    @parents
   end
 
   def visit
@@ -59,21 +50,22 @@ class Node
   end
 
   def display
-    puts "#{@id} (#{@top_position}) : #{@children.map{|k,v| "#{k.id}=>#{v}" }.to_s} : #{@visit} : (Reverse children: #{@reverse_children.map{|k,v| "#{k.id}=>#{v}" }.to_s} )"
+    puts "#{@id} : #{@children.map{|k,v| "#{k.id}=>#{v}" }.to_s} : #{@visit} : (Parents: #{@parents.map{|k,v| "#{k.id}=>#{v}" }.to_s} )"
   end
 
-  #does a dfs/top-sort of the graph, ordering the nodes by their finish times and
-  #checking if each can read the target node.
-
+  #Does a reverse DFS of the graph, to check recursively which nodes can reach
+  #the current node.
   def prune
     @visit = CAN_REACH_TARGET
-    for node, count in @reverse_children
+    for node, count in @parents
       if node.visit == UNVISITED
         node.prune
       end
     end
   end
 
+  #Performs a topological sort of the graph, returning a node list ordered by
+  #decreasing finish times.
   def top_sort
     top_sort_visit([]).reverse
   end
@@ -90,7 +82,7 @@ class Node
 end
 
 class KingdomConnector
-  MOD = 10**9
+  MOD = 10**9 #the number of paths is mod this number.
   def initialize
     @n,@m = STDIN.readline.split.map{|x| x.to_i }
     @nodes = Array.new(@n.to_i+1)
@@ -107,6 +99,7 @@ class KingdomConnector
     @nodes.each{|n| n.display }
   end
 
+  #returns the number of paths from @nodes[1] to @nodes[@n]
   def count_paths
     @nodes[@n].prune
     if not @nodes[1].visit == Node::CAN_REACH_TARGET
@@ -133,7 +126,7 @@ class KingdomConnector
       if init.children[cur]
         paths = init.children[cur]
       end
-      for prev,count in cur.reverse_children
+      for prev,count in cur.parents
         paths += prev.paths*count
       end
       cur.paths(paths.modulo(MOD))
