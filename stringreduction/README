@@ -1,0 +1,5 @@
+APPROACH:
+
+Do a DFS of possible reductions. Notice that if there is only 1 char
+remaining, or if there are two chars remaining and they are the same,
+then that will be optimal, so return early with that value.
