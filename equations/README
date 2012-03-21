@@ -1,0 +1,11 @@
+APPROACH:
+
+1/x + 1/y = 1/N! iff y = N!(N!+d)/d (where x = N! + d). In other
+words, an integer d gives a solution if and only d divides
+(N!)^2. Hence, we wish to calculate the number of factors of (N!)^2.
+
+This code does this naively by calculating a list of primes, and using
+that to find the divisors of every number between 1 and N. To speed up
+this process, we only find a sigle factor for each number, and save
+that factor as well as the dividend. This memoized structure can later
+be used to find all the factors of any number.
