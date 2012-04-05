@@ -1,0 +1,18 @@
+APPROACH:
+
+This is an impartial game, which are a well-studied class of
+game. Sprague-grundy theory gives an algorithm to solve this. See:
+
+http://www.gabrielnivasch.org/fun/combinatorial-games/sprague-grundy
+
+for a very good explanation.
+
+The implementation here is in two steps: For each size 3 <= x <= 50,
+we compute the s-g number of a single stone pile of size x. This is
+precomputed using gen_grundy.cpp, and hardcoded into stonepiles.cpp
+(for speed). The hard work is in generating these values, because it
+requires finding all the possible valid moves (i.e. unique splits) of
+each pile size.
+
+stone_pile.cpp uses these values to compute the winner of given board
+positions. 
